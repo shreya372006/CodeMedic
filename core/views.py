@@ -202,3 +202,5 @@ def session_delete_view(request, session_id):
         messages.success(request, 'Analysis session deleted.')
         return redirect('core:dashboard')
     return redirect('core:dashboard')
+
+# Handle repository dashboard requests

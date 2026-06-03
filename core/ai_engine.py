@@ -112,3 +112,5 @@ def validate_bug_type(bug_type):
     if bug_type in valid_types:
         return bug_type
     return 'warning'
+
+    # ML-based semantic risk analysis engine
