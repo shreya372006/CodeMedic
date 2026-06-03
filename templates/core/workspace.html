@@ -16,9 +16,7 @@
 
 <div class="workspace-grid">
 
-    <!-- LEFT: EDITOR PANEL -->
     <div class="editor-panel">
-
         <div class="editor-toolbar">
             <div class="lang-selector-wrap">
                 <i class="fa-solid fa-code"></i>
@@ -52,12 +50,9 @@
                 Analyse Code
             </button>
         </div>
-
     </div>
 
-    <!-- RIGHT: RESULTS PANEL -->
     <div class="results-panel">
-
         <div id="results-placeholder" class="results-placeholder">
             <i class="fa-solid fa-stethoscope"></i>
             <p>Your analysis results will appear here.</p>
@@ -70,7 +65,6 @@
         </div>
 
         <div id="results-content" class="hidden">
-
             <div class="results-summary">
                 <div class="summary-item">
                     <span class="summary-label">Bugs Found</span>
@@ -86,9 +80,7 @@
             </div>
 
             <div id="bugs-container"></div>
-
         </div>
-
     </div>
 </div>
 
@@ -159,7 +151,6 @@ document.getElementById('analyse-btn').addEventListener('click', function() {
     document.getElementById('results-content').classList.add('hidden');
     document.getElementById('results-loading').classList.remove('hidden');
 
-    // clear previous highlights
     for (let i = 0; i < editor.lineCount(); i++) {
         editor.removeLineClass(i, 'background', 'bug-highlight');
     }

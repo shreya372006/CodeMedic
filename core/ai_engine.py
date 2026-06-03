@@ -4,7 +4,7 @@ from groq import Groq
 
 client = Groq(api_key=os.getenv('GROQ_API_KEY'))
 
-SYSTEM_PROMPT = """You are CodeMedic, an expert code analysis AI. 
+SYSTEM_PROMPT = """You are CodeMedic, an expert code analysis AI.
 Your job is to analyse code and find ALL bugs, errors, and issues.
 
 You must respond ONLY with a valid JSON object in this exact format:
@@ -39,7 +39,6 @@ def analyse_code(code, language):
     }
 
     lang_name = language_names.get(language, language)
-
     numbered_code = add_line_numbers(code)
 
     user_message = f"""Analyse this {lang_name} code and find ALL bugs:
@@ -61,9 +60,7 @@ Return ONLY a JSON object with all bugs found."""
         )
 
         raw = response.choices[0].message.content.strip()
-
         raw = clean_json_response(raw)
-
         data = json.loads(raw)
 
         bugs = data.get('bugs', [])

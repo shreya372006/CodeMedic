@@ -144,16 +144,9 @@ def export_feedback_view(request):
 
     writer = csv.writer(response)
     writer.writerow([
-        'Feedback ID',
-        'User',
-        'Bug ID',
-        'Bug Type',
-        'Line Number',
-        'Description',
-        'Fix Suggestion',
-        'Verdict',
-        'Language',
-        'Created At',
+        'Feedback ID', 'User', 'Bug ID', 'Bug Type',
+        'Line Number', 'Description', 'Fix Suggestion',
+        'Verdict', 'Language', 'Created At'
     ])
 
     feedbacks = Feedback.objects.select_related(
