@@ -4,7 +4,7 @@
 
 A futuristic full-stack AI debugging platform with an animated AI companion, live code analysis, change detection, and security scanning.
 
----
+-----
 
 ## 📁 Project Structure
 
@@ -14,7 +14,7 @@ CodeMedicPlusPlus/
 └── backend/
 ```
 
----
+-----
 
 ## ⚡ Quick Setup (Step by Step)
 
@@ -37,7 +37,7 @@ CREATE USER codemedic_user WITH PASSWORD 'yourpassword';
 GRANT ALL PRIVILEGES ON DATABASE codemedic_db TO codemedic_user;
 ```
 
----
+----
 
 ## 🐍 Step 2 — Backend Setup
 
@@ -89,7 +89,7 @@ python manage.py runserver
 
 Backend runs at: **http://localhost:8000**
 
----
+----
 
 ## ⚛️ Step 3 — Frontend Setup
 
@@ -106,7 +106,7 @@ npm start
 
 Frontend runs at: **http://localhost:3000**
 
----
+----
 
 ## 🚀 Open in Browser
 
@@ -128,7 +128,7 @@ Frontend runs at: **http://localhost:3000**
 | GET    | `/api/history/`        | View previous analyses     |
 | POST   | `/api/feedback/`       | Store user feedback        |
 
----
+----
 
 ## 🔥 Features
 
@@ -143,7 +143,7 @@ Frontend runs at: **http://localhost:3000**
 * **Instant AJAX-Based Result Updates**
 * **Web-Based Interactive Interface**
 
----
+----
 
 ## 🛠️ Troubleshooting
 
@@ -179,7 +179,7 @@ Check Django server is running
 Verify API URL configuration
 ```
 
----
+----
 
 ## 📦 Tech Stack
 
@@ -198,7 +198,7 @@ Verify API URL configuration
 | Real-Time Updates       | jQuery AJAX                |
 | Deployment              | Render / Railway           |
 
----
+----
 
 ## 🔍 System Workflow
 
@@ -213,6 +213,6 @@ Verify API URL configuration
 9. User feedback is saved for future improvements.
 10. Results are displayed instantly on the webpage.
 
----
+----
 
 Built with ❤️ — CodeMedic++ v1.0
