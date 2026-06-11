@@ -1,0 +1,11 @@
+/* Future UI Improvements */
+
+.btn-modern{
+    border-radius:10px;
+    padding:10px 20px;
+}
+
+.card-modern{
+    border-radius:15px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
