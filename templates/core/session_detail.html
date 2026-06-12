@@ -19,6 +19,9 @@
             <i class="fa-solid fa-clock"></i>
             {{ session.created_at|date:"d M Y, h:i A" }}
         </span>
+        <button class="btn-export-pdf" onclick="exportPDF()">
+            <i class="fa-solid fa-file-pdf"></i> Export PDF
+        </button>
     </div>
 </div>
 
@@ -38,7 +41,7 @@
 
         {% if bugs %}
             {% for bug in bugs %}
-                <div class="bug-card bug-{{ bug.bug_type }}">
+                <div class="bug-card bug-{{ bug.bug_type }}" id="bug-card-{{ bug.id }}">
                     <div class="bug-card-header">
                         <span class="bug-type-badge bug-type-{{ bug.bug_type }}">
                             {{ bug.get_bug_type_display }}
@@ -59,6 +62,28 @@
                         </div>
                         <p>{{ bug.fix_suggestion }}</p>
                     </div>
+                    <div class="bug-feedback">
+                        <span class="feedback-label">Was this helpful?</span>
+                        {% if bug.feedback %}
+                            <button class="btn-feedback btn-correct {% if bug.feedback.verdict == 'correct' %}btn-feedback-active{% endif %}"
+                                onclick="submitFeedback({{ bug.id }}, 'correct', this)"
+                                {% if bug.feedback.verdict == 'correct' %}disabled{% endif %}>
+                                <i class="fa-solid fa-thumbs-up"></i> Yes
+                            </button>
+                            <button class="btn-feedback btn-incorrect {% if bug.feedback.verdict == 'incorrect' %}btn-feedback-active{% endif %}"
+                                onclick="submitFeedback({{ bug.id }}, 'incorrect', this)"
+                                {% if bug.feedback.verdict == 'incorrect' %}disabled{% endif %}>
+                                <i class="fa-solid fa-thumbs-down"></i> No
+                            </button>
+                        {% else %}
+                            <button class="btn-feedback btn-correct" onclick="submitFeedback({{ bug.id }}, 'correct', this)">
+                                <i class="fa-solid fa-thumbs-up"></i> Yes
+                            </button>
+                            <button class="btn-feedback btn-incorrect" onclick="submitFeedback({{ bug.id }}, 'incorrect', this)">
+                                <i class="fa-solid fa-thumbs-down"></i> No
+                            </button>
+                        {% endif %}
+                    </div>
                 </div>
             {% endfor %}
         {% else %}
@@ -71,4 +96,113 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const CSRF_TOKEN = '{{ csrf_token }}';
+
+function exportPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    let y = 20;
+
+    doc.setFillColor(99, 102, 241);
+    doc.rect(0, 0, pageWidth, 14, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('CodeMedic — Bug Analysis Report', 14, 10);
+
+    y = 25;
+    doc.setTextColor(30, 30, 30);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Date: {{ session.created_at|date:"d M Y, h:i A" }}`, 14, y); y += 7;
+    doc.text(`Language: {{ session.get_language_display|upper }}`, 14, y); y += 7;
+    doc.text(`Total Bugs: {{ session.error_count }}`, 14, y); y += 7;
+    doc.text(`Risk Level: {{ session.get_risk_level_display }}`, 14, y); y += 10;
+
+    doc.setDrawColor(200, 200, 200);
+    doc.line(14, y, pageWidth - 14, y);
+    y += 8;
+
+    {% if bugs %}
+        {% for bug in bugs %}
+        if (y > 260) { doc.addPage(); y = 20; }
+
+        const color{{ bug.id }} = {
+            'syntax':  [239, 68, 68],
+            'logical': [245, 158, 11],
+            'runtime': [249, 115, 22],
+            'warning': [59, 130, 246],
+            'style':   [139, 92, 246],
+        }['{{ bug.bug_type }}'] || [100, 100, 100];
+
+        doc.setFillColor(...color{{ bug.id }});
+        doc.roundedRect(14, y, pageWidth - 28, 8, 2, 2, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.text(`Bug {{ forloop.counter }} — {{ bug.get_bug_type_display|upper }}   |   Line {{ bug.line_number }}`, 18, y + 5.5);
+        y += 12;
+
+        doc.setTextColor(30, 30, 30);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.text("What's wrong:", 14, y); y += 5;
+        doc.setFont('helvetica', 'normal');
+        const desc{{ bug.id }} = doc.splitTextToSize(`{{ bug.description|escapejs }}`, pageWidth - 28);
+        doc.text(desc{{ bug.id }}, 14, y);
+        y += desc{{ bug.id }}.length * 5 + 3;
+
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(16, 185, 129);
+        doc.text('Fix suggestion:', 14, y); y += 5;
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(30, 30, 30);
+        const fix{{ bug.id }} = doc.splitTextToSize(`{{ bug.fix_suggestion|escapejs }}`, pageWidth - 28);
+        doc.text(fix{{ bug.id }}, 14, y);
+        y += fix{{ bug.id }}.length * 5 + 8;
+
+        doc.setDrawColor(220, 220, 220);
+        doc.line(14, y, pageWidth - 14, y);
+        y += 6;
+        {% endfor %}
+    {% else %}
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(16, 185, 129);
+        doc.text('No bugs found! Your code is clean.', 14, y);
+    {% endif %}
+
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    doc.text('Generated by CodeMedic — AI Bug Detection Platform', 14, doc.internal.pageSize.getHeight() - 10);
+    doc.save(`codemedic-report-{{ session.language }}-{{ session.created_at|date:"Y-m-d" }}.pdf`);
+}
+
+function submitFeedback(bugId, verdict, btn) {
+    $.ajax({
+        url: '{% url "core:feedback" %}',
+        method: 'POST',
+        contentType: 'application/json',
+        headers: { 'X-CSRFToken': CSRF_TOKEN },
+        data: JSON.stringify({ bug_id: bugId, verdict: verdict }),
+        success: function(response) {
+            const card = btn.closest('.bug-feedback');
+            card.querySelectorAll('.btn-feedback').forEach(b => {
+                b.classList.remove('btn-feedback-active');
+                b.disabled = false;
+            });
+            btn.classList.add('btn-feedback-active');
+            btn.disabled = true;
+        },
+        error: function() {
+            alert('Could not save feedback. Please try again.');
+        }
+    });
+}
+</script>
 {% endblock %}
