@@ -126,6 +126,12 @@ editor.setSize('100%', '460px');
 
 document.getElementById('language-select').addEventListener('change', function() {
     editor.setOption('mode', modeMap[this.value]);
+    editor.setValue('');
+    document.getElementById('results-content').classList.add('hidden');
+    document.getElementById('results-placeholder').classList.remove('hidden');
+    document.getElementById('bugs-container').innerHTML = '';
+    document.getElementById('export-pdf-btn').classList.add('hidden');
+    document.getElementById('line-count').textContent = '1 / 100 lines';
 });
 
 editor.on('change', function() {
