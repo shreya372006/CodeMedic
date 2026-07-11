@@ -6,7 +6,7 @@ A futuristic full-stack AI debugging platform with an animated AI companion, liv
 
 -----
 
-## 📁 Project Structure
+##  Project Structure
 
 ```text
 CodeMedicPlusPlus/
@@ -27,7 +27,7 @@ CodeMedicPlusPlus/
 
 ---
 
-## 🗄️ Step 1 — PostgreSQL Database Setup
+##  Step 1 — PostgreSQL Database Setup
 
 Open PostgreSQL and run:
 
@@ -39,7 +39,7 @@ GRANT ALL PRIVILEGES ON DATABASE codemedic_db TO codemedic_user;
 
 ----
 
-## 🐍 Step 2 — Backend Setup
+##  Step 2 — Backend Setup
 
 ```bash
 # Navigate to backend
@@ -91,7 +91,7 @@ Backend runs at: **http://localhost:8000**
 
 ----
 
-## ⚛️ Step 3 — Frontend Setup
+##  Step 3 — Frontend Setup
 
 ```bash
 # Open a NEW terminal tab/window
@@ -108,7 +108,7 @@ Frontend runs at: **http://localhost:3000**
 
 ----
 
-## 🚀 Open in Browser
+##  Open in Browser
 
 1. Go to **http://localhost:3000**
 2. Upload or paste source code
@@ -130,7 +130,7 @@ Frontend runs at: **http://localhost:3000**
 
 ----
 
-## 🔥 Features
+##  Features
 
 * **Real-Time Code Analysis**
 * **AI-Powered Bug Detection**
@@ -200,7 +200,7 @@ Verify API URL configuration
 
 ----
 
-## 🔍 System Workflow
+##  System Workflow
 
 1. User enters source code in the web interface.
 2. jQuery AJAX sends code to Django backend.
