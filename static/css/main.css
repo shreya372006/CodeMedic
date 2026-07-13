@@ -1380,3 +1380,41 @@ body.light-theme .bug-footer {
 body.light-theme .btn-export-pdf {
     box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
 }
+/* ── CHARTS ── */
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.chart-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.chart-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+    text-align: center;
+}
+
+.chart-card canvas {
+    max-height: 200px !important;
+}
+
+@media (max-width: 768px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* light theme */
+body.light-theme .chart-card {
+    background: #ffffff;
+    border-color: #e2e8f0;
+}

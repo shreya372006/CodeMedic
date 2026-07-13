@@ -23,6 +23,27 @@
     </div>
 </div>
 
+{% if total_analyses > 0 %}
+<div class="charts-grid">
+
+    <div class="chart-card">
+        <div class="chart-title">Analyses — Last 7 Days</div>
+        <canvas id="dailyChart"></canvas>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-title">Bug Types Breakdown</div>
+        <canvas id="bugTypeChart"></canvas>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-title">Risk Level Distribution</div>
+        <canvas id="riskChart"></canvas>
+    </div>
+
+</div>
+{% endif %}
+
 <div class="section-title">Recent Analyses</div>
 
 {% if recent_logs %}
@@ -75,4 +96,118 @@
     </div>
 {% endif %}
 
+{% endblock %}
+
+{% block extra_js %}
+{% if total_analyses > 0 %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+const dailyLabels = {{ daily_labels|safe }};
+const dailyCounts = {{ daily_counts|safe }};
+const bugTypeLabels = {{ bug_type_labels|safe }};
+const bugTypeData = {{ bug_type_data|safe }};
+const riskLabels = {{ risk_labels|safe }};
+const riskData = {{ risk_data|safe }};
+
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.font.family = 'Inter, sans-serif';
+
+// Daily analyses line chart
+new Chart(document.getElementById('dailyChart'), {
+    type: 'bar',
+    data: {
+        labels: dailyLabels,
+        datasets: [{
+            label: 'Analyses',
+            data: dailyCounts,
+            backgroundColor: 'rgba(99, 102, 241, 0.5)',
+            borderColor: '#6366f1',
+            borderWidth: 2,
+            borderRadius: 6,
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: { stepSize: 1 },
+                grid: { color: '#1e293b' }
+            },
+            x: {
+                grid: { color: '#1e293b' }
+            }
+        }
+    }
+});
+
+// Bug type pie chart
+const bugColors = [
+    '#ef4444', '#f59e0b', '#f97316',
+    '#3b82f6', '#8b5cf6'
+];
+new Chart(document.getElementById('bugTypeChart'), {
+    type: 'doughnut',
+    data: {
+        labels: bugTypeLabels,
+        datasets: [{
+            data: bugTypeData,
+            backgroundColor: bugColors.slice(0, bugTypeLabels.length),
+            borderWidth: 0,
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: { padding: 15, font: { size: 11 } }
+            }
+        }
+    }
+});
+
+// Risk level bar chart
+const riskColors = {
+    'Safe': '#10b981',
+    'Low': '#3b82f6',
+    'Medium': '#f59e0b',
+    'High': '#ef4444',
+    'Critical': '#dc2626'
+};
+new Chart(document.getElementById('riskChart'), {
+    type: 'bar',
+    data: {
+        labels: riskLabels,
+        datasets: [{
+            label: 'Sessions',
+            data: riskData,
+            backgroundColor: riskLabels.map(l => riskColors[l] + '88' || '#6366f1'),
+            borderColor: riskLabels.map(l => riskColors[l] || '#6366f1'),
+            borderWidth: 2,
+            borderRadius: 6,
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: { stepSize: 1 },
+                grid: { color: '#1e293b' }
+            },
+            x: {
+                grid: { color: '#1e293b' }
+            }
+        }
+    }
+});
+</script>
+{% endif %}
 {% endblock %}

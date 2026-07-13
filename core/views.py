@@ -22,12 +22,54 @@ def dashboard_view(request):
     languages_used = sessions.values_list('language', flat=True).distinct().count()
     recent_logs = sessions[:10]
 
+    # Bug type breakdown for pie chart
+    from django.db.models import Count
+    bug_types = BugReport.objects.filter(
+        session__user=request.user
+    ).values('bug_type').annotate(count=Count('bug_type'))
+
+    bug_type_labels = []
+    bug_type_data = []
+    for bt in bug_types:
+        bug_type_labels.append(bt['bug_type'].capitalize())
+        bug_type_data.append(bt['count'])
+
+    # Risk level distribution for bar chart
+    risk_levels = sessions.values('risk_level').annotate(
+        count=Count('risk_level')
+    )
+    risk_labels = []
+    risk_data = []
+    for r in risk_levels:
+        risk_labels.append(r['risk_level'].capitalize())
+        risk_data.append(r['count'])
+
+    # Analyses over last 7 days
+    from django.utils import timezone
+    from datetime import timedelta
+    import json
+
+    today = timezone.now().date()
+    last_7_days = [(today - timedelta(days=i)) for i in range(6, -1, -1)]
+    daily_counts = []
+    daily_labels = []
+    for day in last_7_days:
+        count = sessions.filter(created_at__date=day).count()
+        daily_counts.append(count)
+        daily_labels.append(day.strftime('%d %b'))
+
     context = {
         'username': request.user.username,
         'total_analyses': total_analyses,
         'total_bugs': total_bugs,
         'languages_used': languages_used,
         'recent_logs': recent_logs,
+        'bug_type_labels': json.dumps(bug_type_labels),
+        'bug_type_data': json.dumps(bug_type_data),
+        'risk_labels': json.dumps(risk_labels),
+        'risk_data': json.dumps(risk_data),
+        'daily_labels': json.dumps(daily_labels),
+        'daily_counts': json.dumps(daily_counts),
     }
     return render(request, 'core/dashboard.html', context)
 
