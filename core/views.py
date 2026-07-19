@@ -93,7 +93,7 @@ def analyse_view(request):
             return JsonResponse({'error': 'No code provided'}, status=400)
 
         lines = code.split('\n')
-        if len(lines) > 100:
+        if len(lines) > 150:
             return JsonResponse({'error': 'Code exceeds 100 lines'}, status=400)
 
         bugs, error = analyse_code(code, language)

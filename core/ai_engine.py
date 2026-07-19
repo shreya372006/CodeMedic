@@ -5,7 +5,7 @@ from groq import Groq
 client = Groq(api_key=os.getenv('GROQ_API_KEY'))
 
 SYSTEM_PROMPT = """You are CodeMedic, an expert code analysis AI.
-Your job is to analyse code and find ALL bugs, errors, and issues.
+Your job is to analyse code and find ONLY real bugs and errors.
 
 You must respond ONLY with a valid JSON object in this exact format:
 {
@@ -20,12 +20,17 @@ You must respond ONLY with a valid JSON object in this exact format:
 }
 
 Rules:
-- Find EVERY single bug, error, warning, and issue in the code
+- Find only REAL bugs that cause actual errors, crashes, or wrong output
 - line must be the exact line number where the bug occurs
 - type must be exactly one of: syntax, logical, runtime, warning, style
 - description must clearly explain what is wrong and why
 - fix must give a specific actionable fix
-- If no bugs found, return {"bugs": []}
+- Do NOT flag code that is correct and works properly
+- Do NOT flag standard coding practices as bugs
+- Do NOT flag variable names unless they cause actual errors
+- Do NOT flag missing error handling unless it is critical
+- Only flag syntax errors, logical errors, runtime crashes, and critical warnings
+- If the code is correct and works properly, return {"bugs": []}
 - Return ONLY the JSON object, no other text, no markdown, no explanation
 """
 
@@ -41,11 +46,11 @@ def analyse_code(code, language):
     lang_name = language_names.get(language, language)
     numbered_code = add_line_numbers(code)
 
-    user_message = f"""Analyse this {lang_name} code and find ALL bugs:
+    user_message = f"""Analyse this {lang_name} code and find only REAL bugs that cause errors or wrong output:
 
 {numbered_code}
 
-Return ONLY a JSON object with all bugs found."""
+Return ONLY a JSON object with real bugs found. If code is correct, return {{"bugs": []}}"""
 
     try:
         response = client.chat.completions.create(
@@ -112,5 +117,3 @@ def validate_bug_type(bug_type):
     if bug_type in valid_types:
         return bug_type
     return 'warning'
-
-    # ML-based semantic risk analysis engine

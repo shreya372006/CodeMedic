@@ -131,13 +131,12 @@ document.getElementById('language-select').addEventListener('change', function()
     document.getElementById('results-placeholder').classList.remove('hidden');
     document.getElementById('bugs-container').innerHTML = '';
     document.getElementById('export-pdf-btn').classList.add('hidden');
-    document.getElementById('line-count').textContent = '1 / 100 lines';
-});
+document.getElementById('line-count').textContent = '1 / 150 lines';});
 
 editor.on('change', function() {
     const lines = editor.lineCount();
-    document.getElementById('line-count').textContent = lines + ' / 100 lines';
-    if (lines > 100) {
+    document.getElementById('line-count').textContent = lines + ' / 150 lines';
+    if (lines > 150) {
         document.getElementById('line-warning').classList.remove('hidden');
         document.getElementById('analyse-btn').disabled = true;
     } else {
